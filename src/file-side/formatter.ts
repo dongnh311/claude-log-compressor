@@ -1,5 +1,6 @@
 import { estimateTokens } from "../tokens.js";
 import type { ParsedFile, Symbol } from "../types.js";
+import { formatLineRange, kindLabel } from "./utils.js";
 
 export interface FormatOptions {
   focus?: string;
@@ -14,6 +15,7 @@ export interface FormattedResult {
 }
 
 const MAX_OUTLINE_LINES = 80;
+const MAX_OUTLINE_LINES_FOCUSED = 200;
 
 export function formatOutlineOnly(parsed: ParsedFile): FormattedResult {
   const lines = header(parsed, "outline only");
@@ -47,8 +49,7 @@ export function formatWithFocus(
     const bodyTokens = estimateTokens(bodyText);
     const half = Math.floor(budget / 2);
     if (bodyTokens > half) {
-      // Oversized: emit structural outline instead of full body.
-      const outlined = structuralOutline(sym, bodyText);
+      const outlined = structuralOutline(sym);
       tokenAccum += estimateTokens(outlined);
       bodyChunks.push(outlined);
       focused.push(sym);
@@ -66,7 +67,21 @@ export function formatWithFocus(
   );
   lines.push("OUTLINE");
   lines.push("---------------------------------------------------------");
-  renderTree(parsed.symbols, 0, lines, MAX_OUTLINE_LINES, new Set(focused.map((s) => s.qualified_name)));
+  const highlight = new Set(focused.map((s) => s.qualified_name));
+  const rendered = new Set<string>();
+  renderTree(parsed.symbols, 0, lines, MAX_OUTLINE_LINES_FOCUSED, highlight, rendered);
+  // If the outline cap skipped any focused symbols, append stubs so Claude
+  // can still orient around what was picked.
+  const missing = focused.filter((s) => !rendered.has(s.qualified_name));
+  if (missing.length > 0) {
+    lines.push("");
+    lines.push(`(focused symbols beyond outline cap:)`);
+    for (const m of missing) {
+      lines.push(
+        `  ${kindLabel(m.kind)} ${m.qualified_name} ${formatLineRange(m.line_range[0], m.line_range[1])}   ← focused`,
+      );
+    }
+  }
   lines.push("");
   if (bodyChunks.length > 0) {
     lines.push("FOCUSED SYMBOLS");
@@ -129,6 +144,7 @@ function renderTree(
   out: string[],
   budget: number,
   highlight?: Set<string>,
+  rendered?: Set<string>,
 ): number {
   let emitted = 0;
   for (const s of symbols) {
@@ -138,71 +154,37 @@ function renderTree(
     }
     const indent = depth === 0 ? "" : `${"  ".repeat(depth - 1)}├─ `;
     const tag = s.modifiers.length ? `${s.modifiers.join(" ")} ` : "";
-    const range = `[L${s.line_range[0]}-L${s.line_range[1]}]`;
+    const range = formatLineRange(s.line_range[0], s.line_range[1]);
     const marker = highlight?.has(s.qualified_name) ? "   ← focused" : "";
-    out.push(`${indent}${tag}${kindLabel(s)} ${s.name} ${range}${marker}`);
+    out.push(`${indent}${tag}${kindLabel(s.kind)} ${s.name} ${range}${marker}`);
+    rendered?.add(s.qualified_name);
     emitted++;
     if (s.children.length > 0) {
-      emitted += renderTree(s.children, depth + 1, out, budget, highlight);
+      emitted += renderTree(s.children, depth + 1, out, budget, highlight, rendered);
     }
   }
   return emitted;
 }
 
-function kindLabel(s: Symbol): string {
-  switch (s.kind) {
-    case "class":
-      return "class";
-    case "interface":
-      return "interface";
-    case "enum":
-      return "enum";
-    case "object":
-      return "object";
-    case "function":
-      return "fun";
-    case "method":
-      return "method";
-    case "constructor":
-      return "constructor";
-    case "property":
-      return "property";
-    case "field":
-      return "field";
-    case "const":
-      return "const";
-    case "type_alias":
-      return "type";
-    case "namespace":
-      return "namespace";
-    case "module":
-      return "module";
-    case "struct":
-      return "struct";
-    case "trait":
-      return "trait";
-  }
-}
-
 function formatSymbolBody(sym: Symbol, body: string): string {
   return [
-    `${kindLabel(sym)} ${sym.qualified_name} [L${sym.line_range[0]}-L${sym.line_range[1]}]`,
+    `${kindLabel(sym.kind)} ${sym.qualified_name} ${formatLineRange(sym.line_range[0], sym.line_range[1])}`,
     "```",
     body,
     "```",
   ].join("\n");
 }
 
-function structuralOutline(sym: Symbol, _body: string): string {
+function structuralOutline(sym: Symbol): string {
   const size = sym.line_range[1] - sym.line_range[0] + 1;
   const out: string[] = [
-    `${kindLabel(sym)} ${sym.qualified_name} [L${sym.line_range[0]}-L${sym.line_range[1]}]`,
+    `${kindLabel(sym.kind)} ${sym.qualified_name} ${formatLineRange(sym.line_range[0], sym.line_range[1])}`,
     "",
     `Body outline (${size} lines, too large to inline):`,
   ];
   if (sym.children.length > 0) {
     for (const c of sym.children) {
-      out.push(`- [L${c.line_range[0]}-L${c.line_range[1]}] ${kindLabel(c)} ${c.name}`);
+      out.push(`- ${formatLineRange(c.line_range[0], c.line_range[1])} ${kindLabel(c.kind)} ${c.name}`);
     }
   } else {
     out.push("- (no nested symbols; use read_lines to zoom in)");

@@ -1,7 +1,7 @@
-import { readFileSync } from "node:fs";
 import type { Symbol } from "../../types.js";
 import { loadParsedFile } from "../file-cache.js";
 import { formatFull, formatOutlineOnly, formatWithFocus } from "../formatter.js";
+import { flattenSymbolTree } from "../utils.js";
 
 export interface SmartReadInput {
   path: string;
@@ -54,20 +54,11 @@ export async function smartRead(input: SmartReadInput): Promise<string> {
 }
 
 function matchSymbols(symbols: Symbol[], focus: string): Symbol[] {
-  const flat: Symbol[] = [];
-  const walk = (list: Symbol[]): void => {
-    for (const s of list) {
-      flat.push(s);
-      walk(s.children);
-    }
-  };
-  walk(symbols);
+  const flat = flattenSymbolTree(symbols);
 
-  // Exact qualified match first.
   const exact = flat.filter((s) => s.qualified_name === focus || s.name === focus);
   if (exact.length > 0) return exact;
 
-  // Try regex.
   let re: RegExp;
   try {
     re = new RegExp(focus, "i");
@@ -76,6 +67,3 @@ function matchSymbols(symbols: Symbol[], focus: string): Symbol[] {
   }
   return flat.filter((s) => re.test(s.name) || re.test(s.qualified_name));
 }
-
-// Re-export for test convenience — not used by the server dispatcher directly.
-export const __internal = { matchSymbols, readFileSync };

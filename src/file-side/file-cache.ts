@@ -1,5 +1,12 @@
 import { createHash } from "node:crypto";
-import { mkdirSync, promises as fsp, readFileSync, statSync } from "node:fs";
+import {
+  mkdirSync,
+  promises as fsp,
+  readFileSync,
+  readdirSync,
+  statSync,
+  unlinkSync,
+} from "node:fs";
 import { homedir } from "node:os";
 import { join, resolve } from "node:path";
 import { estimateTokens } from "../tokens.js";
@@ -140,7 +147,6 @@ export function pruneSymbolCache(now: number = Date.now()): number {
   const TTL_MS = 7 * 24 * 60 * 60 * 1000;
   let removed = 0;
   try {
-    const { readdirSync, statSync, unlinkSync } = require("node:fs") as typeof import("node:fs");
     for (const name of readdirSync(SYMBOLS_DIR)) {
       if (!name.endsWith(".json")) continue;
       const full = join(SYMBOLS_DIR, name);

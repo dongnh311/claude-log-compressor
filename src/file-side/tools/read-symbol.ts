@@ -1,5 +1,4 @@
-import type { Symbol } from "../../types.js";
-import { loadParsedFile } from "../file-cache.js";
+import { flattenSymbolTree, formatLineRange, loadAndGuard } from "../utils.js";
 
 export interface ReadSymbolInput {
   path: string;
@@ -8,19 +7,11 @@ export interface ReadSymbolInput {
 }
 
 export async function readSymbol(input: ReadSymbolInput): Promise<string> {
-  const { parsed, source } = await loadParsedFile(input.path);
-  if (parsed.parse_status === "failed") {
-    return `[error] could not parse ${input.path}: ${parsed.parse_errors.join("; ")}`;
-  }
+  const result = await loadAndGuard(input.path);
+  if ("error" in result) return result.error;
+  const { parsed, source } = result;
 
-  const flat: Symbol[] = [];
-  const walk = (list: Symbol[]): void => {
-    for (const s of list) {
-      flat.push(s);
-      walk(s.children);
-    }
-  };
-  walk(parsed.symbols);
+  const flat = flattenSymbolTree(parsed.symbols);
 
   const out: string[] = [`File: ${parsed.path}`, `file_id: ${parsed.file_id}`, ""];
   for (const requested of input.names) {
@@ -33,7 +24,7 @@ export async function readSymbol(input: ReadSymbolInput): Promise<string> {
       continue;
     }
     for (const m of matches) {
-      out.push(`${m.kind} ${m.qualified_name} [L${m.line_range[0]}-L${m.line_range[1]}]`);
+      out.push(`${m.kind} ${m.qualified_name} ${formatLineRange(m.line_range[0], m.line_range[1])}`);
       if (m.doc) {
         out.push("/* doc */");
         out.push(m.doc);

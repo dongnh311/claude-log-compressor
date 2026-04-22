@@ -1,5 +1,5 @@
 import type { Symbol, SymbolKind } from "../../types.js";
-import { loadParsedFile } from "../file-cache.js";
+import { formatLineRange, kindLabel, loadAndGuard } from "../utils.js";
 
 export interface ListSymbolsInput {
   path: string;
@@ -8,10 +8,9 @@ export interface ListSymbolsInput {
 }
 
 export async function listSymbols(input: ListSymbolsInput): Promise<string> {
-  const { parsed } = await loadParsedFile(input.path);
-  if (parsed.parse_status === "failed") {
-    return `[error] could not parse ${input.path}: ${parsed.parse_errors.join("; ")}`;
-  }
+  const result = await loadAndGuard(input.path);
+  if ("error" in result) return result.error;
+  const { parsed } = result;
 
   const kinds = input.kinds && input.kinds.length > 0 ? new Set(input.kinds) : null;
   const maxDepth = input.depth === undefined ? -1 : input.depth;
@@ -44,9 +43,9 @@ function emit(
     const include = !kinds || kinds.has(s.kind);
     if (include) {
       const indent = "  ".repeat(depth);
-      const range = `[L${s.line_range[0]}-L${s.line_range[1]}]`;
+      const range = formatLineRange(s.line_range[0], s.line_range[1]);
       const mods = s.modifiers.length ? `${s.modifiers.join(" ")} ` : "";
-      out.push(`${indent}${mods}${kindSymbol(s.kind)} ${s.qualified_name} ${range}`);
+      out.push(`${indent}${mods}${kindLabel(s.kind)} ${s.qualified_name} ${range}`);
       count++;
     }
     if (maxDepth < 0 || depth < maxDepth) {
@@ -54,39 +53,4 @@ function emit(
     }
   }
   return count;
-}
-
-function kindSymbol(kind: SymbolKind): string {
-  switch (kind) {
-    case "class":
-      return "class";
-    case "interface":
-      return "interface";
-    case "enum":
-      return "enum";
-    case "object":
-      return "object";
-    case "struct":
-      return "struct";
-    case "trait":
-      return "trait";
-    case "function":
-      return "fun";
-    case "method":
-      return "method";
-    case "constructor":
-      return "constructor";
-    case "property":
-      return "property";
-    case "field":
-      return "field";
-    case "const":
-      return "const";
-    case "type_alias":
-      return "type";
-    case "namespace":
-      return "namespace";
-    case "module":
-      return "module";
-  }
 }

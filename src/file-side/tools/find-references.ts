@@ -1,5 +1,6 @@
 import type { Symbol } from "../../types.js";
 import { loadParsedFile } from "../file-cache.js";
+import { flattenSymbolTree } from "../utils.js";
 
 export interface FindReferencesInput {
   path: string;
@@ -13,7 +14,6 @@ export async function findReferencesInFile(input: FindReferencesInput): Promise<
   const { parsed, source } = await loadParsedFile(input.path);
   const contextLines = input.context_lines ?? 2;
 
-  // Build identifier boundary regex.
   let re: RegExp;
   try {
     re = new RegExp(`\\b${escapeRegex(input.identifier)}\\b`, "g");
@@ -22,14 +22,18 @@ export async function findReferencesInFile(input: FindReferencesInput): Promise<
   }
 
   const lines = source.split("\n");
-  const flatSymbols = flatten(parsed.symbols);
+  const flatSymbols = flattenSymbolTree(parsed.symbols);
 
+  // Single-pass regex over the full source; derive line numbers from byte offsets.
   type Match = { line: number; enclosing: string | null };
   const matches: Match[] = [];
-  for (let i = 0; i < lines.length; i++) {
-    if (!re.test(lines[i] ?? "")) continue;
-    re.lastIndex = 0;
-    matches.push({ line: i + 1, enclosing: enclosingSymbol(i + 1, flatSymbols) });
+  const seenLines = new Set<number>();
+  for (const m of source.matchAll(re)) {
+    const offset = m.index ?? 0;
+    const lineNumber = (source.slice(0, offset).match(/\n/g)?.length ?? 0) + 1;
+    if (seenLines.has(lineNumber)) continue;
+    seenLines.add(lineNumber);
+    matches.push({ line: lineNumber, enclosing: enclosingSymbol(lineNumber, flatSymbols) });
     if (matches.length >= MAX_MATCHES) break;
   }
 
@@ -62,18 +66,6 @@ export async function findReferencesInFile(input: FindReferencesInput): Promise<
 
 function escapeRegex(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-
-function flatten(symbols: Symbol[]): Symbol[] {
-  const out: Symbol[] = [];
-  const walk = (list: Symbol[]): void => {
-    for (const s of list) {
-      out.push(s);
-      walk(s.children);
-    }
-  };
-  walk(symbols);
-  return out;
 }
 
 function enclosingSymbol(lineNumber: number, flat: Symbol[]): string | null {
