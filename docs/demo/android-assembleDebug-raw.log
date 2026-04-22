@@ -1,0 +1,142 @@
+> Task :app:clean
+
+> Task :MasterCamera:externalNativeBuildCleanDebug
+Clean cameraMaster-armeabi-v7a
+Clean cameraMaster-arm64-v8a
+
+> Task :MasterCamera:externalNativeBuildCleanRelease
+> Task :MasterCamera:clean
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preDebugBuild UP-TO-DATE
+> Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :app:checkKotlinGradlePluginConfigurationErrors
+> Task :app:generateDebugBuildConfig
+> Task :MasterCamera:preBuild UP-TO-DATE
+> Task :MasterCamera:preDebugBuild UP-TO-DATE
+> Task :app:generateDebugResValues
+> Task :MasterCamera:generateDebugResValues
+> Task :MasterCamera:generateDebugResources
+> Task :MasterCamera:writeDebugAarMetadata
+> Task :MasterCamera:packageDebugResources
+> Task :app:mapDebugSourceSetPaths
+> Task :app:generateDebugResources
+> Task :app:checkDebugAarMetadata
+> Task :app:packageDebugResources
+> Task :app:createDebugCompatibleScreenManifests
+> Task :app:extractDeepLinksDebug
+> Task :MasterCamera:extractDeepLinksDebug
+> Task :MasterCamera:checkKotlinGradlePluginConfigurationErrors
+> Task :MasterCamera:generateDebugBuildConfig
+> Task :MasterCamera:compileDebugLibraryResources
+> Task :MasterCamera:processDebugManifest
+> Task :app:javaPreCompileDebug
+> Task :MasterCamera:javaPreCompileDebug
+> Task :app:mergeDebugShaders
+> Task :MasterCamera:parseDebugLocalResources
+> Task :app:parseDebugLocalResources
+> Task :app:processDebugMainManifest
+> Task :app:processDebugManifest
+> Task :app:processDebugManifestForPackage
+> Task :app:compileDebugShaders NO-SOURCE
+> Task :app:generateDebugAssets UP-TO-DATE
+> Task :MasterCamera:mergeDebugShaders
+> Task :MasterCamera:compileDebugShaders NO-SOURCE
+> Task :MasterCamera:generateDebugAssets UP-TO-DATE
+> Task :MasterCamera:generateDebugRFile
+> Task :MasterCamera:packageDebugAssets
+> Task :app:mergeDebugResources
+> Task :app:mergeDebugAssets
+> Task :app:desugarDebugFileDependencies
+> Task :app:mergeDebugStartupProfile UP-TO-DATE
+> Task :app:mergeDebugJniLibFolders
+> Task :MasterCamera:configureCMakeDebug[arm64-v8a]
+> Task :app:checkDebugDuplicateClasses
+> Task :app:compressDebugAssets
+> Task :app:processDebugResources
+
+> Task :MasterCamera:buildCMakeDebug[arm64-v8a]
+C/C++: ninja: Entering directory `/Users/dongnh/Documents/GitHub/MasterCamera/MasterCamera/.cxx/Debug/3q3l4h5l/arm64-v8a'
+C/C++: /Users/dongnh/Documents/GitHub/MasterCamera/MasterCamera/src/main/cpp/encoder/VideoX264Encoder.cc:250:27: warning: 'rc_buffer_aggressivity' is deprecated [-Wdeprecated-declarations]
+C/C++:             codecContext->rc_buffer_aggressivity = static_cast<float>(1.0F);
+C/C++:                           ^
+C/C++: /Users/dongnh/Documents/GitHub/MasterCamera/MasterCamera/src/main/cpp/../../../../extra/ffmpeg/arm64-v8a/include/libavcodec/avcodec.h:2745:5: note: 'rc_buffer_aggressivity' has been explicitly marked deprecated here
+C/C++:     attribute_deprecated
+C/C++:     ^
+C/C++: /Users/dongnh/Documents/GitHub/MasterCamera/MasterCamera/src/main/cpp/../../../../extra/ffmpeg/arm64-v8a/include/libavutil/attributes.h:94:49: note: expanded from macro 'attribute_deprecated'
+C/C++: #    define attribute_deprecated __attribute__((deprecated))
+C/C++:                                                 ^
+C/C++: /Users/dongnh/Documents/GitHub/MasterCamera/MasterCamera/src/main/cpp/encoder/VideoX264Encoder.cc:251:27: warning: 'rc_initial_cplx' is deprecated [-Wdeprecated-declarations]
+C/C++:             codecContext->rc_initial_cplx = 0.5;
+C/C++:                           ^
+C/C++: /Users/dongnh/Documents/GitHub/MasterCamera/MasterCamera/src/main/cpp/../../../../extra/ffmpeg/arm64-v8a/include/libavcodec/avcodec.h:2748:5: note: 'rc_initial_cplx' has been explicitly marked deprecated here
+C/C++:     attribute_deprecated
+C/C++:     ^
+C/C++: /Users/dongnh/Documents/GitHub/MasterCamera/MasterCamera/src/main/cpp/../../../../extra/ffmpeg/arm64-v8a/include/libavutil/attributes.h:94:49: note: expanded from macro 'attribute_deprecated'
+C/C++: #    define attribute_deprecated __attribute__((deprecated))
+C/C++:                                                 ^
+C/C++: 2 warnings generated.
+
+> Task :MasterCamera:configureCMakeDebug[armeabi-v7a]
+
+> Task :MasterCamera:buildCMakeDebug[armeabi-v7a]
+C/C++: ninja: Entering directory `/Users/dongnh/Documents/GitHub/MasterCamera/MasterCamera/.cxx/Debug/3q3l4h5l/armeabi-v7a'
+C/C++: /Users/dongnh/Documents/GitHub/MasterCamera/MasterCamera/src/main/cpp/encoder/VideoX264Encoder.cc:250:27: warning: 'rc_buffer_aggressivity' is deprecated [-Wdeprecated-declarations]
+C/C++:             codecContext->rc_buffer_aggressivity = static_cast<float>(1.0F);
+C/C++:                           ^
+C/C++: /Users/dongnh/Documents/GitHub/MasterCamera/MasterCamera/src/main/cpp/../../../../extra/ffmpeg/armeabi-v7a/include/libavcodec/avcodec.h:2745:5: note: 'rc_buffer_aggressivity' has been explicitly marked deprecated here
+C/C++:     attribute_deprecated
+C/C++:     ^
+C/C++: /Users/dongnh/Documents/GitHub/MasterCamera/MasterCamera/src/main/cpp/../../../../extra/ffmpeg/armeabi-v7a/include/libavutil/attributes.h:94:49: note: expanded from macro 'attribute_deprecated'
+C/C++: #    define attribute_deprecated __attribute__((deprecated))
+C/C++:                                                 ^
+C/C++: /Users/dongnh/Documents/GitHub/MasterCamera/MasterCamera/src/main/cpp/encoder/VideoX264Encoder.cc:251:27: warning: 'rc_initial_cplx' is deprecated [-Wdeprecated-declarations]
+C/C++:             codecContext->rc_initial_cplx = 0.5;
+C/C++:                           ^
+C/C++: /Users/dongnh/Documents/GitHub/MasterCamera/MasterCamera/src/main/cpp/../../../../extra/ffmpeg/armeabi-v7a/include/libavcodec/avcodec.h:2748:5: note: 'rc_initial_cplx' has been explicitly marked deprecated here
+C/C++:     attribute_deprecated
+C/C++:     ^
+C/C++: /Users/dongnh/Documents/GitHub/MasterCamera/MasterCamera/src/main/cpp/../../../../extra/ffmpeg/armeabi-v7a/include/libavutil/attributes.h:94:49: note: expanded from macro 'attribute_deprecated'
+C/C++: #    define attribute_deprecated __attribute__((deprecated))
+C/C++:                                                 ^
+C/C++: 2 warnings generated.
+
+> Task :MasterCamera:mergeDebugJniLibFolders
+> Task :app:validateSigningDebug
+> Task :MasterCamera:mergeDebugNativeLibs
+> Task :app:writeDebugAppMetadata
+> Task :app:writeDebugSigningConfigVersions
+> Task :MasterCamera:copyDebugJniLibsProjectOnly
+> Task :app:mergeDebugNativeLibs
+
+> Task :app:stripDebugDebugSymbols
+Unable to strip the following libraries, packaging them as they are: libmarsxlog.so.
+
+> Task :app:mergeExtDexDebug
+
+> Task :MasterCamera:compileDebugKotlin
+w: file:///Users/dongnh/Documents/GitHub/MasterCamera/MasterCamera/src/main/java/com/dongnh/mastercamera/camera/Camera2Control.kt:610:17 'when' is exhaustive so 'else' is redundant here
+w: file:///Users/dongnh/Documents/GitHub/MasterCamera/MasterCamera/src/main/java/com/dongnh/mastercamera/control/CameraControl.kt:452:29 Parameter 'displayOrientation' is never used
+w: file:///Users/dongnh/Documents/GitHub/MasterCamera/MasterCamera/src/main/java/com/dongnh/mastercamera/control/CameraControl.kt:583:27 Parameter 'rotation' is never used
+w: file:///Users/dongnh/Documents/GitHub/MasterCamera/MasterCamera/src/main/java/com/dongnh/mastercamera/control/CameraControl.kt:593:17 Parameter 'mute' is never used
+w: file:///Users/dongnh/Documents/GitHub/MasterCamera/MasterCamera/src/main/java/com/dongnh/mastercamera/encoder/MediaCodecSurfaceEncoder.kt:121:45 'getter for outputBuffers: Array<(out) ByteBuffer!>' is deprecated. Deprecated in Java
+w: file:///Users/dongnh/Documents/GitHub/MasterCamera/MasterCamera/src/main/java/com/dongnh/mastercamera/enums/Flash.kt:9:18 Parameter 'value' is never used
+
+> Task :MasterCamera:compileDebugJavaWithJavac
+> Task :MasterCamera:processDebugJavaRes
+> Task :MasterCamera:bundleLibCompileToJarDebug
+> Task :MasterCamera:bundleLibRuntimeToJarDebug
+> Task :MasterCamera:bundleLibRuntimeToDirDebug
+> Task :app:mergeLibDexDebug
+> Task :app:compileDebugKotlin
+> Task :app:compileDebugJavaWithJavac
+> Task :app:dexBuilderDebug
+> Task :app:processDebugJavaRes
+> Task :app:mergeDebugGlobalSynthetics
+> Task :app:mergeProjectDexDebug
+> Task :app:mergeDebugJavaResource
+> Task :app:packageDebug
+> Task :app:createDebugApkListingFileRedirect
+> Task :app:assembleDebug
+
+BUILD SUCCESSFUL in 19s
+70 actionable tasks: 69 executed, 1 up-to-date

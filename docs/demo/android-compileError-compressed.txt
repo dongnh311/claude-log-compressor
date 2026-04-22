@@ -1,0 +1,14 @@
+BUILD FAILED (2 errors, 0 warnings)
+
+Duration: 1s
+
+Errors:
+  Theme.kt:21:26 — The integer literal does not conform to the expected type String
+  Theme.kt:22:19 — Unresolved reference: viewBinding
+
+What went wrong:
+  Execution failed for task ':app:compileDebugKotlin'.
+  > A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+  > Compilation error. See log for more details
+
+Failed task: :app:compileDebugKotlin

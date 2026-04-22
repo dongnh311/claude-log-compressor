@@ -1,0 +1,11 @@
+BUILD SUCCESSFUL (0 errors, 6 warnings)
+
+Duration: 19s
+
+Warnings (6 unique):
+  'when' is exhaustive so 'else' is redundant here
+  Parameter 'displayOrientation' is never used
+  Parameter 'rotation' is never used
+  Parameter 'mute' is never used
+  'getter for outputBuffers: Array<(out) ByteBuffer!>' is deprecated. Deprecated in Java
+  Parameter 'value' is never used

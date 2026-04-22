@@ -1,0 +1,194 @@
+> Task :app:clean
+
+> Task :MasterCamera:externalNativeBuildCleanDebug
+Clean cameraMaster-armeabi-v7a
+Clean cameraMaster-arm64-v8a
+
+> Task :MasterCamera:externalNativeBuildCleanRelease
+> Task :MasterCamera:clean
+> Task :app:buildKotlinToolingMetadata
+> Task :app:checkKotlinGradlePluginConfigurationErrors
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preReleaseBuild UP-TO-DATE
+> Task :app:generateReleaseBuildConfig
+> Task :MasterCamera:preBuild UP-TO-DATE
+> Task :MasterCamera:preReleaseBuild UP-TO-DATE
+> Task :MasterCamera:writeReleaseAarMetadata
+> Task :app:generateReleaseResValues
+> Task :MasterCamera:generateReleaseResValues
+> Task :MasterCamera:generateReleaseResources
+> Task :MasterCamera:packageReleaseResources
+> Task :app:checkReleaseAarMetadata
+> Task :app:mapReleaseSourceSetPaths
+> Task :app:generateReleaseResources
+> Task :app:packageReleaseResources
+> Task :app:createReleaseCompatibleScreenManifests
+> Task :app:extractDeepLinksRelease
+> Task :MasterCamera:extractDeepLinksRelease
+> Task :app:parseReleaseLocalResources
+> Task :MasterCamera:processReleaseManifest
+> Task :MasterCamera:compileReleaseLibraryResources
+> Task :MasterCamera:parseReleaseLocalResources
+> Task :app:processReleaseMainManifest
+> Task :app:processReleaseManifest
+> Task :app:processReleaseManifestForPackage
+> Task :MasterCamera:checkKotlinGradlePluginConfigurationErrors
+> Task :MasterCamera:generateReleaseBuildConfig
+> Task :MasterCamera:generateReleaseRFile
+> Task :MasterCamera:javaPreCompileRelease
+> Task :app:javaPreCompileRelease
+> Task :app:extractProguardFiles
+> Task :MasterCamera:extractProguardFiles
+> Task :MasterCamera:prepareLintJarForPublish UP-TO-DATE
+> Task :app:mergeReleaseResources
+
+> Task :MasterCamera:configureCMakeRelWithDebInfo[arm64-v8a]
+C/C++: CMake Warning (dev) in CMakeLists.txt:
+C/C++:   No project() command is present.  The top-level CMakeLists.txt file must
+C/C++:   contain a literal, direct call to the project() command.  Add a line of
+C/C++:   code such as
+C/C++:     project(ProjectName)
+C/C++:   near the top of the file, but after cmake_minimum_required().
+C/C++:   CMake is pretending there is a "project(Project)" command on the first
+C/C++:   line.
+C/C++: This warning is for project developers.  Use -Wno-dev to suppress it.
+
+> Task :app:processReleaseResources
+
+> Task :MasterCamera:buildCMakeRelWithDebInfo[arm64-v8a]
+C/C++: ninja: Entering directory `/Users/dongnh/Documents/GitHub/MasterCamera/MasterCamera/.cxx/RelWithDebInfo/3s6c2n84/arm64-v8a'
+C/C++: /Users/dongnh/Documents/GitHub/MasterCamera/MasterCamera/src/main/cpp/encoder/VideoX264Encoder.cc:250:27: warning: 'rc_buffer_aggressivity' is deprecated [-Wdeprecated-declarations]
+C/C++:             codecContext->rc_buffer_aggressivity = static_cast<float>(1.0F);
+C/C++:                           ^
+C/C++: /Users/dongnh/Documents/GitHub/MasterCamera/MasterCamera/src/main/cpp/../../../../extra/ffmpeg/arm64-v8a/include/libavcodec/avcodec.h:2745:5: note: 'rc_buffer_aggressivity' has been explicitly marked deprecated here
+C/C++:     attribute_deprecated
+C/C++:     ^
+C/C++: /Users/dongnh/Documents/GitHub/MasterCamera/MasterCamera/src/main/cpp/../../../../extra/ffmpeg/arm64-v8a/include/libavutil/attributes.h:94:49: note: expanded from macro 'attribute_deprecated'
+C/C++: #    define attribute_deprecated __attribute__((deprecated))
+C/C++:                                                 ^
+C/C++: /Users/dongnh/Documents/GitHub/MasterCamera/MasterCamera/src/main/cpp/encoder/VideoX264Encoder.cc:251:27: warning: 'rc_initial_cplx' is deprecated [-Wdeprecated-declarations]
+C/C++:             codecContext->rc_initial_cplx = 0.5;
+C/C++:                           ^
+C/C++: /Users/dongnh/Documents/GitHub/MasterCamera/MasterCamera/src/main/cpp/../../../../extra/ffmpeg/arm64-v8a/include/libavcodec/avcodec.h:2748:5: note: 'rc_initial_cplx' has been explicitly marked deprecated here
+C/C++:     attribute_deprecated
+C/C++:     ^
+C/C++: /Users/dongnh/Documents/GitHub/MasterCamera/MasterCamera/src/main/cpp/../../../../extra/ffmpeg/arm64-v8a/include/libavutil/attributes.h:94:49: note: expanded from macro 'attribute_deprecated'
+C/C++: #    define attribute_deprecated __attribute__((deprecated))
+C/C++:                                                 ^
+C/C++: 2 warnings generated.
+
+> Task :MasterCamera:compileReleaseKotlin
+w: file:///Users/dongnh/Documents/GitHub/MasterCamera/MasterCamera/src/main/java/com/dongnh/mastercamera/camera/Camera2Control.kt:610:17 'when' is exhaustive so 'else' is redundant here
+w: file:///Users/dongnh/Documents/GitHub/MasterCamera/MasterCamera/src/main/java/com/dongnh/mastercamera/control/CameraControl.kt:452:29 Parameter 'displayOrientation' is never used
+w: file:///Users/dongnh/Documents/GitHub/MasterCamera/MasterCamera/src/main/java/com/dongnh/mastercamera/control/CameraControl.kt:583:27 Parameter 'rotation' is never used
+w: file:///Users/dongnh/Documents/GitHub/MasterCamera/MasterCamera/src/main/java/com/dongnh/mastercamera/control/CameraControl.kt:593:17 Parameter 'mute' is never used
+w: file:///Users/dongnh/Documents/GitHub/MasterCamera/MasterCamera/src/main/java/com/dongnh/mastercamera/encoder/MediaCodecSurfaceEncoder.kt:121:45 'getter for outputBuffers: Array<(out) ByteBuffer!>' is deprecated. Deprecated in Java
+w: file:///Users/dongnh/Documents/GitHub/MasterCamera/MasterCamera/src/main/java/com/dongnh/mastercamera/enums/Flash.kt:9:18 Parameter 'value' is never used
+
+> Task :MasterCamera:compileReleaseJavaWithJavac
+> Task :MasterCamera:bundleLibCompileToJarRelease
+> Task :MasterCamera:bundleLibRuntimeToJarRelease
+> Task :MasterCamera:processReleaseJavaRes
+> Task :MasterCamera:createFullJarRelease
+> Task :MasterCamera:generateReleaseLintModel
+
+> Task :MasterCamera:configureCMakeRelWithDebInfo[armeabi-v7a]
+C/C++: CMake Warning (dev) in CMakeLists.txt:
+C/C++:   No project() command is present.  The top-level CMakeLists.txt file must
+C/C++:   contain a literal, direct call to the project() command.  Add a line of
+C/C++:   code such as
+C/C++:     project(ProjectName)
+C/C++:   near the top of the file, but after cmake_minimum_required().
+C/C++:   CMake is pretending there is a "project(Project)" command on the first
+C/C++:   line.
+C/C++: This warning is for project developers.  Use -Wno-dev to suppress it.
+
+> Task :app:compileReleaseKotlin
+
+> Task :MasterCamera:buildCMakeRelWithDebInfo[armeabi-v7a]
+C/C++: ninja: Entering directory `/Users/dongnh/Documents/GitHub/MasterCamera/MasterCamera/.cxx/RelWithDebInfo/3s6c2n84/armeabi-v7a'
+C/C++: /Users/dongnh/Documents/GitHub/MasterCamera/MasterCamera/src/main/cpp/encoder/VideoX264Encoder.cc:250:27: warning: 'rc_buffer_aggressivity' is deprecated [-Wdeprecated-declarations]
+C/C++:             codecContext->rc_buffer_aggressivity = static_cast<float>(1.0F);
+C/C++:                           ^
+C/C++: /Users/dongnh/Documents/GitHub/MasterCamera/MasterCamera/src/main/cpp/../../../../extra/ffmpeg/armeabi-v7a/include/libavcodec/avcodec.h:2745:5: note: 'rc_buffer_aggressivity' has been explicitly marked deprecated here
+C/C++:     attribute_deprecated
+C/C++:     ^
+C/C++: /Users/dongnh/Documents/GitHub/MasterCamera/MasterCamera/src/main/cpp/../../../../extra/ffmpeg/armeabi-v7a/include/libavutil/attributes.h:94:49: note: expanded from macro 'attribute_deprecated'
+C/C++: #    define attribute_deprecated __attribute__((deprecated))
+C/C++:                                                 ^
+C/C++: /Users/dongnh/Documents/GitHub/MasterCamera/MasterCamera/src/main/cpp/encoder/VideoX264Encoder.cc:251:27: warning: 'rc_initial_cplx' is deprecated [-Wdeprecated-declarations]
+C/C++:             codecContext->rc_initial_cplx = 0.5;
+C/C++:                           ^
+C/C++: /Users/dongnh/Documents/GitHub/MasterCamera/MasterCamera/src/main/cpp/../../../../extra/ffmpeg/armeabi-v7a/include/libavcodec/avcodec.h:2748:5: note: 'rc_initial_cplx' has been explicitly marked deprecated here
+C/C++:     attribute_deprecated
+C/C++:     ^
+C/C++: /Users/dongnh/Documents/GitHub/MasterCamera/MasterCamera/src/main/cpp/../../../../extra/ffmpeg/armeabi-v7a/include/libavutil/attributes.h:94:49: note: expanded from macro 'attribute_deprecated'
+C/C++: #    define attribute_deprecated __attribute__((deprecated))
+C/C++:                                                 ^
+C/C++: 2 warnings generated.
+
+> Task :app:compileReleaseJavaWithJavac
+> Task :app:generateReleaseLintVitalReportModel
+> Task :MasterCamera:mergeReleaseJniLibFolders
+> Task :MasterCamera:extractDeepLinksForAarRelease
+> Task :MasterCamera:mergeReleaseNativeLibs
+> Task :MasterCamera:extractReleaseAnnotations
+> Task :MasterCamera:mergeReleaseGeneratedProguardFiles
+> Task :MasterCamera:mergeReleaseConsumerProguardFiles
+> Task :MasterCamera:mergeReleaseShaders
+> Task :MasterCamera:compileReleaseShaders NO-SOURCE
+> Task :MasterCamera:generateReleaseAssets UP-TO-DATE
+> Task :MasterCamera:packageReleaseAssets
+> Task :MasterCamera:prepareReleaseArtProfile
+> Task :MasterCamera:mergeReleaseJavaResource
+
+> Task :MasterCamera:stripReleaseDebugSymbols
+Unable to strip the following libraries, packaging them as they are: libmarsxlog.so.
+
+> Task :MasterCamera:syncReleaseLibJars
+> Task :MasterCamera:writeReleaseLintModelMetadata
+> Task :MasterCamera:generateReleaseLintVitalModel
+> Task :app:mergeReleaseJniLibFolders
+> Task :MasterCamera:copyReleaseJniLibsProjectAndLocalJars
+> Task :MasterCamera:bundleLibRuntimeToDirRelease
+> Task :app:checkReleaseDuplicateClasses
+> Task :MasterCamera:copyReleaseJniLibsProjectOnly
+> Task :app:dexBuilderRelease
+> Task :MasterCamera:bundleReleaseLocalLintAar
+> Task :app:desugarReleaseFileDependencies
+> Task :app:mergeReleaseStartupProfile
+> Task :app:mergeReleaseNativeLibs
+> Task :MasterCamera:lintVitalAnalyzeRelease
+> Task :app:mergeReleaseArtProfile
+
+> Task :app:stripReleaseDebugSymbols
+Unable to strip the following libraries, packaging them as they are: libmarsxlog.so.
+
+> Task :app:mergeReleaseShaders
+> Task :app:compileReleaseShaders NO-SOURCE
+> Task :app:generateReleaseAssets UP-TO-DATE
+> Task :app:mergeReleaseGlobalSynthetics
+> Task :app:extractReleaseNativeSymbolTables
+> Task :app:mergeReleaseAssets
+> Task :app:extractReleaseVersionControlInfo
+> Task :app:processReleaseJavaRes
+> Task :app:collectReleaseDependencies
+> Task :app:sdkReleaseDependencyData
+> Task :app:optimizeReleaseResources
+> Task :app:writeReleaseAppMetadata
+> Task :app:writeReleaseSigningConfigVersions
+> Task :app:compressReleaseAssets
+> Task :app:mergeReleaseNativeDebugMetadata
+> Task :app:mergeReleaseJavaResource
+> Task :app:mergeExtDexRelease
+> Task :app:mergeDexRelease
+> Task :app:compileReleaseArtProfile
+> Task :app:packageRelease
+> Task :app:createReleaseApkListingFileRedirect
+> Task :app:lintVitalAnalyzeRelease
+> Task :app:lintVitalReportRelease
+> Task :app:lintVitalRelease
+> Task :app:assembleRelease
+
+BUILD SUCCESSFUL in 48s
+99 actionable tasks: 98 executed, 1 up-to-date

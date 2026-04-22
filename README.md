@@ -1,5 +1,9 @@
 # claude-log-compressor
 
+[![npm](https://img.shields.io/npm/v/claude-log-compressor.svg)](https://www.npmjs.com/package/claude-log-compressor)
+[![CI](https://github.com/dongnh311/claude-log-compressor/actions/workflows/ci.yml/badge.svg)](https://github.com/dongnh311/claude-log-compressor/actions/workflows/ci.yml)
+[![license](https://img.shields.io/npm/l/claude-log-compressor.svg)](./LICENSE)
+
 > MCP server that intercepts build/test/install commands, runs them, and returns a compressed summary to Claude instead of the raw multi-thousand-token output. Cuts context consumption during iterative build/test loops by 60–95%.
 
 ## Why
