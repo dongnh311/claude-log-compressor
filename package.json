@@ -1,6 +1,6 @@
 {
   "name": "@dongnh311/claude-context-saver",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "MCP server that cuts Claude Code token usage. Two capabilities: log compression (build/test/install output) and smart file reading (AST-backed symbol-level source access). Context-efficient tooling for Pro-tier users.",
   "keywords": [
     "mcp",
@@ -50,6 +50,7 @@
     "format": "biome format --write src test",
     "clean": "rm -rf dist",
     "bench": "tsx scripts/benchmark.ts",
+    "bench:file": "tsx scripts/bench-file-side.ts",
     "prepublishOnly": "npm run clean && npm run typecheck && npm run build && npm test"
   },
   "dependencies": {

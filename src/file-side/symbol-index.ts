@@ -27,6 +27,44 @@ const NODE_MAP_TS: Record<string, SymbolKind> = {
   property_signature: "field",
   abstract_method_signature: "method",
   lexical_declaration: "const",
+  internal_module: "namespace",
+};
+
+const NODE_MAP_JAVA: Record<string, SymbolKind> = {
+  class_declaration: "class",
+  interface_declaration: "interface",
+  enum_declaration: "enum",
+  method_declaration: "method",
+  constructor_declaration: "constructor",
+  field_declaration: "field",
+  annotation_type_declaration: "interface",
+};
+
+const NODE_MAP_PYTHON: Record<string, SymbolKind> = {
+  class_definition: "class",
+  function_definition: "function",
+  decorated_definition: "function",
+};
+
+const NODE_MAP_GO: Record<string, SymbolKind> = {
+  function_declaration: "function",
+  method_declaration: "method",
+  type_declaration: "type_alias",
+  type_spec: "type_alias",
+  const_declaration: "const",
+  var_declaration: "property",
+};
+
+const NODE_MAP_RUST: Record<string, SymbolKind> = {
+  struct_item: "struct",
+  enum_item: "enum",
+  trait_item: "trait",
+  impl_item: "class",
+  function_item: "function",
+  type_item: "type_alias",
+  const_item: "const",
+  static_item: "const",
+  mod_item: "module",
 };
 
 type NodeMap = Record<string, SymbolKind>;
@@ -48,14 +86,9 @@ export function extractSymbols(
   const symbols: Symbol[] = [];
   const errors: string[] = [];
 
-  const nodeMap =
-    lang === "kotlin"
-      ? NODE_MAP_KOTLIN
-      : lang === "typescript" || lang === "javascript"
-        ? NODE_MAP_TS
-        : {};
+  const nodeMap = pickNodeMap(lang);
 
-  if (Object.keys(nodeMap).length === 0) {
+  if (!nodeMap || Object.keys(nodeMap).length === 0) {
     return { symbols, parse_errors: [`no symbol extractor for ${lang}`] };
   }
 
@@ -69,6 +102,24 @@ export function extractSymbols(
 
   collectErrors(root, errors);
   return { symbols, parse_errors: errors };
+}
+
+function pickNodeMap(lang: LanguageId): NodeMap | null {
+  switch (lang) {
+    case "kotlin":
+      return NODE_MAP_KOTLIN;
+    case "typescript":
+    case "javascript":
+      return NODE_MAP_TS;
+    case "java":
+      return NODE_MAP_JAVA;
+    case "python":
+      return NODE_MAP_PYTHON;
+    case "go":
+      return NODE_MAP_GO;
+    case "rust":
+      return NODE_MAP_RUST;
+  }
 }
 
 function walkNode(node: SyntaxNode, ctx: WalkContext): void {

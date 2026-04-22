@@ -76,7 +76,7 @@ Claude calls the MCP tool instead of `bash`/`Read`. The server runs the command 
 
 Same pattern for `smart_read`: parse file → return outline first, focused symbols on demand, cache AST for the session.
 
-## Tools (v0.1.0 — log side)
+## Tools — log side
 
 | Tool | Input (highlights) | What it does |
 |---|---|---|
@@ -85,7 +85,7 @@ Same pattern for `smart_read`: parse file → return outline first, focused symb
 | `smart_test` | `framework?` (`jest`/`pytest`/`junit`/`go`/`auto`), `pattern?`, `cwd?` | Auto-detects test framework (go.mod, pytest config, package.json, gradlew). |
 | `read_log_section` | `log_id`, `grep?`, `lines_around?`, `start_line?`/`end_line?`, `max_tokens?` | Slice a cached full log. Escape hatch when compressed view isn't enough. |
 
-## Tools (v0.2.0 — file side, target)
+## Tools — file side
 
 | Tool | Input | What it does |
 |---|---|---|
@@ -95,7 +95,7 @@ Same pattern for `smart_read`: parse file → return outline first, focused symb
 | `find_references_in_file` | `path`, `identifier`, `context_lines?` | AST-aware "where is X used inside this file" with `inside_symbol` annotation. |
 | `read_lines` | `path`, `start_line`, `end_line` | Line-range fallback when symbol approach doesn't fit. |
 
-Languages supported in MVP (file side): Kotlin, Java, TypeScript/TSX, JavaScript/JSX, Python, Go, Rust. Swift deferred to Phase 3.
+Languages supported for file side: Kotlin, Java, TypeScript/TSX, JavaScript/JSX, Python, Go, Rust. Swift deferred to a future release.
 
 ## Benchmark — real Android project
 
@@ -110,6 +110,17 @@ Measured live on `./gradlew …` against a real Android Compose + C++/NDK projec
 | `:app:compileDebugKotlin` (2 injected errors) | 667 | 114 | **82.9%** ⟵ both errors with `file:line:col` preserved |
 
 Average ≈ **93%** reduction, 100% of errors and warnings kept.
+
+## Benchmark — real source files (file side)
+
+Measured on actual Kotlin source from the same MasterCamera project:
+
+| File | Lines | Full | smart_read outline | smart_read focus | Reduction (outline) |
+|---|---:|---:|---:|---:|---:|
+| `CameraControl.kt` | 1,040 | 7,949 | 839 | 1,261 (focus=`startRecord`) | **89.4%** |
+| `Camera2Control.kt` | 951 | 8,721 | 878 | 893 (focus=`captureImage`) | **89.9%** |
+
+Both files cleared the SPEC §2 target ("≤20% of full-file tokens for a ≥1000-line Kotlin file"). Focused mode still beats 80% reduction because the outline gets bundled with the body.
 
 ## Benchmark — synthetic fixtures (log side)
 

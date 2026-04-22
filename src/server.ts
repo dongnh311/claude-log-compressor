@@ -6,7 +6,9 @@ import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
+import { findReferencesInFile } from "./file-side/tools/find-references.js";
 import { listSymbols } from "./file-side/tools/list-symbols.js";
+import { readLines } from "./file-side/tools/read-lines.js";
 import { readSymbol } from "./file-side/tools/read-symbol.js";
 import { smartRead } from "./file-side/tools/smart-read.js";
 import { readLogSection } from "./log-side/tools/read-log-section.js";
@@ -79,6 +81,17 @@ async function dispatch(name: string, args: Record<string, unknown>): Promise<st
     case "smart_read": {
       if (typeof args.path !== "string") throw new Error("path (string) is required");
       return smartRead(args as unknown as Parameters<typeof smartRead>[0]);
+    }
+    case "find_references_in_file": {
+      if (typeof args.path !== "string") throw new Error("path (string) is required");
+      if (typeof args.identifier !== "string") throw new Error("identifier (string) is required");
+      return findReferencesInFile(args as unknown as Parameters<typeof findReferencesInFile>[0]);
+    }
+    case "read_lines": {
+      if (typeof args.path !== "string") throw new Error("path (string) is required");
+      if (typeof args.start_line !== "number") throw new Error("start_line (number) is required");
+      if (typeof args.end_line !== "number") throw new Error("end_line (number) is required");
+      return readLines(args as unknown as Parameters<typeof readLines>[0]);
     }
     default:
       throw new Error(`unknown tool: ${name}`);
@@ -220,6 +233,38 @@ const TOOL_SCHEMAS = [
         },
       },
       required: ["path", "names"],
+    },
+  },
+  {
+    name: "find_references_in_file",
+    description:
+      "Find occurrences of an identifier within a single file, with AST-aware 'inside <symbol>' annotation. For cross-file search use your regular grep tool.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string" },
+        identifier: { type: "string", description: "Identifier to search for (word-boundary match)" },
+        context_lines: {
+          type: "number",
+          description: "Lines of context around each match (default 2)",
+        },
+      },
+      required: ["path", "identifier"],
+    },
+  },
+  {
+    name: "read_lines",
+    description:
+      "Read a specific line range from a file. Line-range fallback when smart_read's symbol approach doesn't fit (e.g. middle of a 500-line function).",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string" },
+        start_line: { type: "number", description: "1-indexed start (inclusive)" },
+        end_line: { type: "number", description: "1-indexed end (inclusive)" },
+        max_tokens: { type: "number", description: "Cap returned tokens (default 2000)" },
+      },
+      required: ["path", "start_line", "end_line"],
     },
   },
 ];
