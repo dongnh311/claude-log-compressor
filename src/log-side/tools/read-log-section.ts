@@ -1,5 +1,5 @@
-import { readLog } from "../cache.js";
-import { estimateTokens } from "../tokens.js";
+import { readLog } from "../log-cache.js";
+import { estimateTokens } from "../../tokens.js";
 
 export interface ReadLogSectionInput {
   log_id: string;

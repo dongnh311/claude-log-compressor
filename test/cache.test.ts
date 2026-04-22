@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { newLogId, readLog, writeLog } from "../src/cache.js";
+import { newLogId, readLog, writeLog } from "../src/log-side/log-cache.js";
 
 describe("cache", () => {
   it("round-trips content via log id", async () => {

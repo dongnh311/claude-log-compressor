@@ -1,5 +1,5 @@
-import type { ClassifierInput, CompressContext, CompressedResult, Compressor } from "../types.js";
-import { makeResult } from "../utils.js";
+import type { ClassifierInput, CompressContext, CompressedResult, Compressor } from "../../types.js";
+import { makeResult } from "../../utils.js";
 import { gradleCompressor } from "./gradle.js";
 
 // Gradle test reporter format: `com.foo.BarTest > testBaz STATUS` (plain form).

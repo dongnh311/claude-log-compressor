@@ -6,10 +6,10 @@
 //   npx tsx scripts/real-world-test.ts ~/Documents/GitHub/OnTheFly-Android "./gradlew assembleDebug"
 
 import { writeFileSync } from "node:fs";
-import { classify } from "../src/classifier.js";
-import { pickCompressor } from "../src/compressors/index.js";
-import { newLogId } from "../src/cache.js";
-import { execCommand } from "../src/executor.js";
+import { classify } from "../src/log-side/classifier.js";
+import { pickCompressor } from "../src/log-side/compressors/index.js";
+import { newLogId } from "../src/log-side/log-cache.js";
+import { execCommand } from "../src/log-side/executor.js";
 import { estimateTokens } from "../src/tokens.js";
 
 const [, , cwdArg, ...cmdParts] = process.argv;

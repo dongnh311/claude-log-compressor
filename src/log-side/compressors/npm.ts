@@ -1,5 +1,5 @@
-import type { ClassifierInput, CompressContext, CompressedResult, Compressor } from "../types.js";
-import { makeResult } from "../utils.js";
+import type { ClassifierInput, CompressContext, CompressedResult, Compressor } from "../../types.js";
+import { makeResult } from "../../utils.js";
 
 const DEPRECATION_RE = /^npm\s+warn\s+deprecated\s+(\S+):\s*(.*)$/i;
 const WARN_RE = /^npm\s+warn\s+(.*)$/i;

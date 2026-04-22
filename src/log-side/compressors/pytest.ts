@@ -1,5 +1,5 @@
-import type { ClassifierInput, CompressContext, CompressedResult, Compressor } from "../types.js";
-import { makeResult } from "../utils.js";
+import type { ClassifierInput, CompressContext, CompressedResult, Compressor } from "../../types.js";
+import { makeResult } from "../../utils.js";
 
 const PLATFORM_RE = /^platform\s+/;
 const FAILURES_HEADER_RE = /^=+\s*FAILURES\s*=+/;

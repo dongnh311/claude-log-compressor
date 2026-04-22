@@ -1,4 +1,4 @@
-import type { ClassifierInput } from "./types.js";
+import type { ClassifierInput } from "../types.js";
 
 export type OutputKind = "gradle" | "npm" | "jest" | "pytest" | "junit" | "generic";
 

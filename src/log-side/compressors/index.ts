@@ -1,5 +1,5 @@
 import type { OutputKind } from "../classifier.js";
-import type { Compressor } from "../types.js";
+import type { Compressor } from "../../types.js";
 import { genericCompressor } from "./generic.js";
 import { gradleCompressor } from "./gradle.js";
 import { jestCompressor } from "./jest.js";

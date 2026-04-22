@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { genericCompressor } from "../src/compressors/generic.js";
+import { genericCompressor } from "../src/log-side/compressors/generic.js";
 
 describe("genericCompressor", () => {
   it("always claims canHandle as the fallback", () => {

@@ -1,8 +1,8 @@
 import { classify } from "../classifier.js";
 import { pickCompressor } from "../compressors/index.js";
-import { newLogId, writeLog } from "../cache.js";
+import { newLogId, writeLog } from "../log-cache.js";
 import { execCommand } from "../executor.js";
-import type { CompressedResult } from "../types.js";
+import type { CompressedResult } from "../../types.js";
 
 export interface SmartRunInput {
   command: string;

@@ -1,5 +1,5 @@
-import type { ClassifierInput, CompressContext, CompressedResult, Compressor } from "../types.js";
-import { makeResult } from "../utils.js";
+import type { ClassifierInput, CompressContext, CompressedResult, Compressor } from "../../types.js";
+import { makeResult } from "../../utils.js";
 
 const PASS_RE = /^PASS\s+(\S+)/;
 const FAIL_RE = /^FAIL\s+(\S+)/;

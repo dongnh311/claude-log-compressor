@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { junitCompressor } from "../src/compressors/junit.js";
+import { junitCompressor } from "../src/log-side/compressors/junit.js";
 
 const FIX = join(__dirname, "fixtures");
 const load = (name: string) => readFileSync(join(FIX, name), "utf8");

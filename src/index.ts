@@ -1,6 +1,7 @@
 import { appendFileSync } from "node:fs";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { pruneExpired, serverLogPath } from "./cache.js";
+import { runInstall } from "./install/install-command.js";
+import { pruneExpired, serverLogPath } from "./log-side/log-cache.js";
 import { createServer } from "./server.js";
 
 function log(msg: string): void {
@@ -14,6 +15,10 @@ function log(msg: string): void {
 }
 
 async function main(): Promise<void> {
+  if (process.argv[2] === "install") {
+    process.exit(runInstall());
+  }
+
   try {
     const pruned = pruneExpired();
     if (pruned > 0) log(`pruned ${pruned} expired log(s)`);

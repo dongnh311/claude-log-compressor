@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(timeout 30 npx -y claude-log-compressor@latest)",
+      "Bash(claude --version)"
+    ]
+  }
+}

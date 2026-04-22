@@ -1,5 +1,5 @@
 import { spawn } from "node:child_process";
-import type { ExecOptions, ExecResult } from "./types.js";
+import type { ExecOptions, ExecResult } from "../types.js";
 
 const DEFAULT_TIMEOUT_MS = 300_000;
 const DEFAULT_MAX_BUFFER = 32 * 1024 * 1024;

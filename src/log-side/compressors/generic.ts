@@ -1,6 +1,6 @@
-import { estimateTokens } from "../tokens.js";
-import type { ClassifierInput, CompressContext, CompressedResult, Compressor } from "../types.js";
-import { makeResult } from "../utils.js";
+import { estimateTokens } from "../../tokens.js";
+import type { ClassifierInput, CompressContext, CompressedResult, Compressor } from "../../types.js";
+import { makeResult } from "../../utils.js";
 
 const ERROR_RE = /\b(error|fail(ed|ure)?|exception|fatal|panic)\b/i;
 

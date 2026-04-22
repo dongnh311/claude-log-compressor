@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { classify } from "../src/classifier.js";
+import { classify } from "../src/log-side/classifier.js";
 
 const input = (command: string, firstKb = "") => ({
   command,

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { execCommand, stripAnsi } from "../src/executor.js";
+import { execCommand, stripAnsi } from "../src/log-side/executor.js";
 
 describe("stripAnsi", () => {
   it("removes common color codes", () => {

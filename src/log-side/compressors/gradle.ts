@@ -1,6 +1,6 @@
 import { basename } from "node:path";
-import type { ClassifierInput, CompressContext, CompressedResult, Compressor } from "../types.js";
-import { makeResult } from "../utils.js";
+import type { ClassifierInput, CompressContext, CompressedResult, Compressor } from "../../types.js";
+import { makeResult } from "../../utils.js";
 
 // Kotlin/javac-style: `e: file:///path/to/File.kt:LINE:COL MESSAGE` or
 // `e: /path/File.kt:LINE:COL MESSAGE`. Also matches `w:` for warnings.

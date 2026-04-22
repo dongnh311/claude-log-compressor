@@ -6,10 +6,10 @@ import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
-import { readLogSection } from "./tools/read-log-section.js";
-import { smartBuild } from "./tools/smart-build.js";
-import { smartRun } from "./tools/smart-run.js";
-import { smartTest } from "./tools/smart-test.js";
+import { readLogSection } from "./log-side/tools/read-log-section.js";
+import { smartBuild } from "./log-side/tools/smart-build.js";
+import { smartRun } from "./log-side/tools/smart-run.js";
+import { smartTest } from "./log-side/tools/smart-test.js";
 
 const VERSION = readVersion();
 

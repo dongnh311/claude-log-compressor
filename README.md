@@ -1,98 +1,105 @@
-# claude-log-compressor
+# @dongnh311/claude-context-saver
 
-[![npm](https://img.shields.io/npm/v/claude-log-compressor.svg)](https://www.npmjs.com/package/claude-log-compressor)
-[![CI](https://github.com/dongnh311/claude-log-compressor/actions/workflows/ci.yml/badge.svg)](https://github.com/dongnh311/claude-log-compressor/actions/workflows/ci.yml)
-[![license](https://img.shields.io/npm/l/claude-log-compressor.svg)](./LICENSE)
+[![npm](https://img.shields.io/npm/v/@dongnh311/claude-context-saver.svg)](https://www.npmjs.com/package/@dongnh311/claude-context-saver)
+[![CI](https://github.com/dongnh311/claude-context-saver/actions/workflows/ci.yml/badge.svg)](https://github.com/dongnh311/claude-context-saver/actions/workflows/ci.yml)
+[![license](https://img.shields.io/npm/l/@dongnh311/claude-context-saver.svg)](./LICENSE)
 
-> MCP server that intercepts build/test/install commands, runs them, and returns a compressed summary to Claude instead of the raw multi-thousand-token output. Cuts context consumption during iterative build/test loops by 60–95%.
+> MCP server that cuts Claude Code token usage through two cooperating capabilities:
+> **(1) log compression** for build/test/install output, **(2) smart file reading** for source code at the symbol level. Same philosophy: don't let raw, unfiltered content flood Claude's context — let Claude pull exactly what it needs.
+
+> **Note:** this package was originally published as `claude-log-compressor` (log side only). It has been renamed to `@dongnh311/claude-context-saver` now that file-side capabilities are landing. The old name is deprecated; please update your config (see Quick start).
 
 ## Quick start
 
-**1.** Add to your Claude Code MCP config at `~/.claude/mcp.json` (or your project's `.claude/mcp.json`):
+**1.** Add to your Claude Code MCP config at `~/.claude/mcp.json` (or project `.claude/mcp.json`):
 
 ```json
 {
   "mcpServers": {
-    "log-compressor": {
+    "context-saver": {
       "command": "npx",
-      "args": ["-y", "claude-log-compressor@latest"]
+      "args": ["-y", "@dongnh311/claude-context-saver@latest"]
     }
   }
 }
 ```
 
-**2.** Restart Claude Code. The tools `smart_run`, `smart_build`, `smart_test`, `read_log_section` will appear.
+Or via CLI:
 
-**3.** (Recommended) In your project's `CLAUDE.md`, nudge the model to use them instead of raw bash for builds/tests/installs:
-
-```markdown
-## Build/test commands
-Always use `smart_build` and `smart_test` (from the log-compressor MCP server)
-instead of invoking gradle/npm/jest/pytest directly via bash. They return the
-same information in 5–10× fewer tokens while preserving all errors.
+```bash
+claude mcp add context-saver -s user -- npx -y @dongnh311/claude-context-saver@latest
 ```
 
-That's it. Next time Claude runs `./gradlew assembleDebug` on your project, it'll call `smart_build` and see a ~100-token summary instead of a 2,000-token log dump.
+**2.** Restart Claude Code. Tools `smart_run`, `smart_build`, `smart_test`, `read_log_section` show up now. File-side tools (`smart_read`, `list_symbols`, `read_symbol`, `find_references_in_file`, `read_lines`) ship in `v0.2.0`.
+
+**3.** (Recommended) Nudge Claude in your project's `CLAUDE.md`:
+
+```markdown
+## Token-efficient tooling (claude-context-saver)
+- Build/test: use `smart_build` / `smart_test` instead of bash gradle/npm/jest/pytest.
+- File reading (from v0.2): prefer `smart_read` over `Read` for source files > 300 lines.
+```
 
 ## Why
 
-When Claude Code runs commands like `gradle build`, `npm install`, `pytest`, or reads large logs, the raw output often consumes 5,000–20,000 tokens per invocation. Over a session, that exhausts the Pro-tier 5-hour limit and the context window far faster than necessary — and 90% of it is noise:
+Two dominant sources of wasted tokens in a Claude Code session:
 
-- `gradle build`: progress lines, `> Task :xxx UP-TO-DATE`, Download URLs, configure chatter
-- `npm install`: duplicate deprecation warnings, peer-dep notes, audit boilerplate
-- `pytest -v`: passed-test verbose log dominates; real signal is in failed tests
-- Android stack traces: 50–100 frames, of which only 3–5 are app code
+- **Noisy command output.** `gradle build`, `npm install`, `pytest` can emit 5k–20k tokens per invocation, 90% of which is progress bars, deprecation warnings, and framework noise.
+- **Whole-file reads for narrow questions.** Claude reads a 2,000-line `MainActivity.kt` to fix one function; 90% of what goes into context is irrelevant.
+
+Both compound quickly: the Pro 5-hour limit hits before the real work is done, prompt-cache hit rate drops, and the model's attention gets diluted.
 
 ## How it works
 
-Claude calls the MCP tool instead of `bash`. This server runs the command, captures the full output, classifies it (gradle / npm / jest / pytest / junit / generic), applies a type-specific compressor, caches the full log to disk, and returns only a compact summary.
+Claude calls the MCP tool instead of `bash`/`Read`. The server runs the command (or parses the file), keeps the heavy output on disk, and returns only a compact summary plus an id Claude can use to retrieve detail on demand.
 
 ```
-[Claude] → smart_run("./gradlew assembleDebug")
-              ↓
-         [claude-log-compressor]
-              ↓
-         run command → 12k tokens raw output
-              ↓
-         classify → "gradle"
-              ↓
-         gradle compressor (errors, deduped warnings, failing task)
-              ↓
-         cache full log → ~/.cache/claude-log-compressor/grd_abc123.log (7d TTL)
-              ↓
-         return 1.5k token summary + log_id="grd_abc123"
-              ↑
-[Claude] ← summary; can call read_log_section("grd_abc123", grep="...") for detail
+[Claude] ──► smart_build("./gradlew assembleDebug")
+              │
+              ▼
+         [context-saver]
+              │
+              ├─► run command → 12k tokens raw
+              │      │
+              │      ▼
+              │   classify → "gradle"
+              │      │
+              │      ▼
+              │   gradle compressor (errors, deduped warnings, failing task)
+              │      │
+              │      ▼
+              │   cache full log → ~/.cache/claude-context-saver/logs/grd_abc12345.log (7d TTL)
+              │
+              └─► return 0.8k token summary + log_id="grd_abc12345"
+[Claude] ◄──
 ```
 
-## Install (manual)
+Same pattern for `smart_read`: parse file → return outline first, focused symbols on demand, cache AST for the session.
 
-See **[Quick start](#quick-start)** at the top for the common path (via MCP config). If you want to invoke the server binary directly:
+## Tools (v0.1.0 — log side)
 
-```bash
-npx claude-log-compressor@latest   # smoke test it starts, then Ctrl-C
-```
+| Tool | Input (highlights) | What it does |
+|---|---|---|
+| `smart_run` | `command`, `cwd?`, `timeout_seconds?`, `max_output_tokens?` | Runs any shell command, auto-classifies output, returns compressed summary + `log_id`. |
+| `smart_build` | `tool?` (`gradle`/`npm`/`cargo`/`make`/`auto`), `args?`, `cwd?` | Auto-detects build tool from `cwd` (gradlew, package.json, Cargo.toml, Makefile). |
+| `smart_test` | `framework?` (`jest`/`pytest`/`junit`/`go`/`auto`), `pattern?`, `cwd?` | Auto-detects test framework (go.mod, pytest config, package.json, gradlew). |
+| `read_log_section` | `log_id`, `grep?`, `lines_around?`, `start_line?`/`end_line?`, `max_tokens?` | Slice a cached full log. Escape hatch when compressed view isn't enough. |
 
-## Tools
+## Tools (v0.2.0 — file side, target)
 
 | Tool | Input | What it does |
 |---|---|---|
-| `smart_run` | `command`, optional `cwd`, `timeout_seconds`, `max_output_tokens` | Runs any shell command; auto-classifies output; returns compressed summary + `log_id`. |
-| `smart_build` | optional `tool` (`gradle`/`npm`/`cargo`/`make`/`auto`), `args`, `cwd` | Auto-detects the build tool from `cwd` (gradlew, package.json, Cargo.toml, Makefile) and runs it through the matching compressor. |
-| `smart_test` | optional `framework` (`jest`/`pytest`/`junit`/`go`/`auto`), `pattern`, `cwd` | Auto-detects the test framework from `cwd` (go.mod, pytest.ini/pyproject, package.json jest/vitest, gradlew) and runs it. |
-| `read_log_section` | `log_id`, optional `grep`, `lines_around`, `start_line`/`end_line`, `max_tokens` | Retrieves a slice of a cached full log. Use when the compressed view isn't enough. |
+| `smart_read` | `path`, `focus?`, `mode?` (`outline`/`full`/`auto`), `max_tokens?` | Smart replacement for Read. Returns outline first, focused symbols on demand. |
+| `list_symbols` | `path`, `kinds?`, `depth?` | Full symbol tree without bodies. |
+| `read_symbol` | `path`, `names[]` (dotted: `Class.method`), `include_surrounding?` | Return bodies of named symbols. |
+| `find_references_in_file` | `path`, `identifier`, `context_lines?` | AST-aware "where is X used inside this file" with `inside_symbol` annotation. |
+| `read_lines` | `path`, `start_line`, `end_line` | Line-range fallback when symbol approach doesn't fit. |
 
-Every compressed response ends with:
-
-```
----
-[Compressed from ~15,234 tokens → ~1,847 tokens (87.9% reduction)]
-[Full log cached as log_id="grd_abc123". Use read_log_section to query details.]
-```
+Languages supported in MVP (file side): Kotlin, Java, TypeScript/TSX, JavaScript/JSX, Python, Go, Rust. Swift deferred to Phase 3.
 
 ## Benchmark — real Android project
 
-Measured live on `./gradlew …` against a real Android Compose + C++/NDK project (MasterCamera) with 2 modules:
+Measured live on `./gradlew …` against a real Android Compose + C++/NDK project (MasterCamera, 2 Gradle modules):
 
 | Command | Raw tokens | Compressed | Reduction |
 |---|---:|---:|---:|
@@ -100,13 +107,11 @@ Measured live on `./gradlew …` against a real Android Compose + C++/NDK projec
 | `clean :app:assembleRelease` (R8) | 2,720 | 82 | **97.0%** |
 | `:app:installDebug` → emulator | 955 | 3 | **99.7%** |
 | `:app:testDebugUnitTest` | 780 | 82 | **89.5%** |
-| `:app:compileDebugKotlin` (2 errors) | 667 | 114 | **82.9%** ⟵ both errors with `file:line:col` preserved |
+| `:app:compileDebugKotlin` (2 injected errors) | 667 | 114 | **82.9%** ⟵ both errors with `file:line:col` preserved |
 
-Average ≈ **93%** reduction. 100% of errors and warnings kept in every case.
+Average ≈ **93%** reduction, 100% of errors and warnings kept.
 
-## Benchmark — synthetic fixtures
-
-The bundled fixtures in `test/fixtures/` are smaller (500–1,700 tokens) so their ratios are lower-bound on real logs. Real 12–20k-token logs compress substantially more — see Android numbers above.
+## Benchmark — synthetic fixtures (log side)
 
 | Fixture | Kind | Original | Compressed | Reduction |
 |---|---|---:|---:|---:|
@@ -122,48 +127,48 @@ The bundled fixtures in `test/fixtures/` are smaller (500–1,700 tokens) so the
 
 Run locally: `npm run bench`.
 
-## What each compressor keeps / drops
+## What each log compressor keeps / drops
 
-### Gradle (`./gradlew …`)
-- **Keep:** BUILD status + duration, every Kotlin/javac error with `file:line:col`, deduped warnings with occurrence counts (`[×3]`), failing task name, "What went wrong" block
-- **Drop:** `> Task :xxx UP-TO-DATE/NO-SOURCE`, `Download …` progress, Daemon startup chatter
+### Gradle
+- **Keep:** BUILD status + duration, every Kotlin/javac error with `file:line:col`, deduped warnings with occurrence counts (`[×3]`), failing task name, "What went wrong" block.
+- **Drop:** `> Task :xxx UP-TO-DATE/NO-SOURCE`, `Download …` URLs, Daemon startup chatter.
 
 ### npm / yarn / pnpm
-- **Keep:** `npm ERR!` blocks with error code, `added X packages` changes, deduped deprecations (per package, top 10), audit severity summary, actionable peer-dep warnings
-- **Drop:** duplicate deprecation lines (collapsed), download progress, boilerplate "run npm audit" text
+- **Keep:** `npm ERR!` blocks with error code, `added X packages`, deduped deprecations (per package, top 10), audit summary.
+- **Drop:** duplicate deprecation lines, download progress, boilerplate audit text.
 
 ### Jest / Vitest
-- **Keep:** `Test Suites:` / `Tests:` / `Time:` summary, every `● Test › name` failure block with assertion diff
-- **Drop:** `PASS src/…` per-suite names (collapsed to count), duplicated "Summary of all failing tests" block
+- **Keep:** `Test Suites:` / `Tests:` / `Time:` summary, every `● Test › name` failure block with assertion diff.
+- **Drop:** `PASS src/…` names (collapsed to count), duplicated "Summary of failing tests" block.
 
 ### Pytest
-- **Keep:** platform/version header, `ERRORS:` + `FAILURES:` blocks verbatim, `short test summary info` (FAILED locators), final result line
-- **Drop:** progress-dot lines (`tests/foo.py ...... [10%]`), rootdir/plugins chatter
+- **Keep:** platform header, `ERRORS:` + `FAILURES:` blocks verbatim, short summary info, final result line.
+- **Drop:** progress dot lines (`tests/foo.py ...... [10%]`), rootdir/plugin chatter.
 
-### JUnit (Gradle/Maven test)
-- **Keep:** each `FAILED` test with FQCN, assertion message, app stack frames, total count
-- **Drop:** `PASSED` test names (collapsed to count), framework frames (`org.junit.*`, `java.base/jdk.internal.*`, `kotlinx.coroutines.internal.*`, `android.os.*`, reflection)
+### JUnit (Gradle/Maven test output)
+- **Keep:** each `FAILED` test with FQCN + assertion + app stack frames, total count.
+- **Drop:** `PASSED` names (count only), framework frames (`org.junit.*`, `java.base/jdk.internal.*`, `kotlinx.coroutines.internal.*`, `android.os.*`, reflection).
 
 ### Generic (fallback)
-- **Keep:** every line matching `/error|fail|exception|fatal|panic/i`
-- **Drop/transform:** consecutive identical lines deduped, middle-truncated if over budget (head 30% + tail 50%)
+- **Keep:** every line matching `/error|fail|exception|fatal|panic/i`.
+- **Transform:** consecutive identical lines deduped, middle-truncated when over budget.
 
 ## FAQ
 
 **What if the compressor drops something I need?**
-Every response includes `log_id="…"`. Call `read_log_section` with a `grep` pattern or `start_line`/`end_line` to pull the raw detail. The full log is on disk (`~/.cache/claude-log-compressor/`) for 7 days.
+Every response includes `log_id`. Call `read_log_section` with a `grep` pattern or `start_line`/`end_line`. Full log is on disk for 7 days.
 
 **Does it work on Windows?**
-WSL works. Native Windows is not in the MVP — see SPEC §4 out-of-scope.
+WSL only in v0.1/v0.2. Native Windows is Phase 3.
 
-**Does it call any external service or send data anywhere?**
-No. Commands run locally, full logs live on your disk, nothing phones home.
+**Does it send anything to a server?**
+No. Commands run locally, logs live on your disk, nothing phones home.
 
-**Why not just tell Claude to pipe through `head`/`grep`?**
-Claude still sees the raw output before filtering because bash-tool results go into context. Compressing server-side is the only way to keep the raw bytes out of the context window.
+**Will Claude actually use `smart_*` instead of bash?**
+With the CLAUDE.md snippet in Quick start, yes. Tool descriptions also explicitly say "ALWAYS prefer this". In practice adherence is high.
 
-**Will Claude actually use `smart_build` instead of `bash gradle build`?**
-With the CLAUDE.md snippet above, adherence is high. Tool descriptions also say "ALWAYS prefer this over bash for builds/installs/tests". The model can't be forced, but in practice it routes correctly once nudged.
+**Why a scoped package name (`@dongnh311/…`)?**
+The plain `claude-context-saver` unscoped name was already taken by an unrelated package. Scoped keeps the descriptive name.
 
 ## Development
 
@@ -177,14 +182,14 @@ npm run dev        # tsc --watch
 npx @modelcontextprotocol/inspector node dist/index.js   # manual tool exercise
 ```
 
-Layout, conventions, and milestones: see [`CLAUDE.md`](./CLAUDE.md).
-Spec: [`SPEC.md`](./SPEC.md) (authoritative) and [`spec-overview.md`](./spec-overview.md) (pitch/roadmap).
+Layout, conventions, milestones: see [`CLAUDE.md`](./CLAUDE.md).
+Unified implementation spec: [`SPEC.md`](./SPEC.md). Archived log-only spec: [`SPEC-v0.1.md`](./SPEC-v0.1.md). High-level pitch: [`spec-overview.md`](./spec-overview.md).
 
 ## Links
 
-- **npm:** [`claude-log-compressor`](https://www.npmjs.com/package/claude-log-compressor)
-- **GitHub:** [dongnh311/claude-log-compressor](https://github.com/dongnh311/claude-log-compressor)
-- **Issues / feedback:** [GitHub Issues](https://github.com/dongnh311/claude-log-compressor/issues)
+- **npm:** [`@dongnh311/claude-context-saver`](https://www.npmjs.com/package/@dongnh311/claude-context-saver)
+- **GitHub:** [dongnh311/claude-context-saver](https://github.com/dongnh311/claude-context-saver)
+- **Issues / feedback:** [GitHub Issues](https://github.com/dongnh311/claude-context-saver/issues)
 
 ## License
 

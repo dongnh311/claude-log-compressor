@@ -1,7 +1,7 @@
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
-import { pickCompressor } from "../src/compressors/index.js";
-import { classify } from "../src/classifier.js";
+import { pickCompressor } from "../src/log-side/compressors/index.js";
+import { classify } from "../src/log-side/classifier.js";
 
 const FIX_DIR = join(process.cwd(), "test", "fixtures");
 

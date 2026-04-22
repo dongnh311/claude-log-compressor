@@ -1,7 +1,7 @@
 {
-  "name": "claude-log-compressor",
+  "name": "@dongnh311/claude-context-saver",
   "version": "0.1.0",
-  "description": "MCP server that intercepts build/test/install commands, runs them, and returns a compressed summary to Claude — dramatically reducing context consumption during iterative build/test loops.",
+  "description": "MCP server that cuts Claude Code token usage. Two capabilities: log compression (build/test/install output) and smart file reading (AST-backed symbol-level source access). Context-efficient tooling for Pro-tier users.",
   "keywords": [
     "mcp",
     "claude-code",
@@ -9,25 +9,29 @@
     "claude",
     "token-optimization",
     "log-compression",
+    "tree-sitter",
+    "ast",
     "gradle",
     "npm",
     "jest",
-    "pytest"
+    "pytest",
+    "kotlin",
+    "typescript"
   ],
   "license": "MIT",
   "author": "dongnh <hoaidongit5@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dongnh311/claude-log-compressor.git"
+    "url": "git+https://github.com/dongnh311/claude-context-saver.git"
   },
   "bugs": {
-    "url": "https://github.com/dongnh311/claude-log-compressor/issues"
+    "url": "https://github.com/dongnh311/claude-context-saver/issues"
   },
-  "homepage": "https://github.com/dongnh311/claude-log-compressor#readme",
+  "homepage": "https://github.com/dongnh311/claude-context-saver#readme",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
-    "claude-log-compressor": "dist/index.js"
+    "claude-context-saver": "dist/index.js"
   },
   "files": [
     "dist",

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { newLogId, writeLog } from "../src/cache.js";
-import { readLogSection } from "../src/tools/read-log-section.js";
+import { newLogId, writeLog } from "../src/log-side/log-cache.js";
+import { readLogSection } from "../src/log-side/tools/read-log-section.js";
 
 async function stageLog(body: string): Promise<string> {
   const id = newLogId("rls");
