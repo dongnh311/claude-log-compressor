@@ -3,7 +3,7 @@ import { mkdirSync, promises as fsp, readdirSync, statSync, unlinkSync } from "n
 import { homedir } from "node:os";
 import { join } from "node:path";
 
-const CACHE_DIR = join(homedir(), ".cache", "claude-log-compressor");
+const CACHE_DIR = join(homedir(), ".cache", "claude-context-saver", "logs");
 const TTL_MS = 7 * 24 * 60 * 60 * 1000;
 
 mkdirSync(CACHE_DIR, { recursive: true });

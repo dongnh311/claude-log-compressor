@@ -1,6 +1,6 @@
 {
   "name": "@dongnh311/claude-context-saver",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "MCP server that cuts Claude Code token usage. Two capabilities: log compression (build/test/install output) and smart file reading (AST-backed symbol-level source access). Context-efficient tooling for Pro-tier users.",
   "keywords": [
     "mcp",

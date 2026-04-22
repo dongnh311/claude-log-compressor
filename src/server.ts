@@ -27,7 +27,7 @@ function readVersion(): string {
 
 export function createServer(): Server {
   const server = new Server(
-    { name: "claude-log-compressor", version: VERSION },
+    { name: "claude-context-saver", version: VERSION },
     { capabilities: { tools: {} } },
   );
 

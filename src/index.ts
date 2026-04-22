@@ -34,6 +34,6 @@ async function main(): Promise<void> {
 
 main().catch((err) => {
   log(`fatal: ${err instanceof Error ? err.stack : String(err)}`);
-  process.stderr.write(`[claude-log-compressor] fatal: ${err}\n`);
+  process.stderr.write(`[claude-context-saver] fatal: ${err}\n`);
   process.exit(1);
 });
