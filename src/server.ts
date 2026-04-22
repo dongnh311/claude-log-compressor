@@ -6,6 +6,9 @@ import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
+import { listSymbols } from "./file-side/tools/list-symbols.js";
+import { readSymbol } from "./file-side/tools/read-symbol.js";
+import { smartRead } from "./file-side/tools/smart-read.js";
 import { readLogSection } from "./log-side/tools/read-log-section.js";
 import { smartBuild } from "./log-side/tools/smart-build.js";
 import { smartRun } from "./log-side/tools/smart-run.js";
@@ -63,6 +66,19 @@ async function dispatch(name: string, args: Record<string, unknown>): Promise<st
     case "read_log_section": {
       if (typeof args.log_id !== "string") throw new Error("log_id (string) is required");
       return readLogSection(args as unknown as Parameters<typeof readLogSection>[0]);
+    }
+    case "list_symbols": {
+      if (typeof args.path !== "string") throw new Error("path (string) is required");
+      return listSymbols(args as unknown as Parameters<typeof listSymbols>[0]);
+    }
+    case "read_symbol": {
+      if (typeof args.path !== "string") throw new Error("path (string) is required");
+      if (!Array.isArray(args.names)) throw new Error("names (string[]) is required");
+      return readSymbol(args as unknown as Parameters<typeof readSymbol>[0]);
+    }
+    case "smart_read": {
+      if (typeof args.path !== "string") throw new Error("path (string) is required");
+      return smartRead(args as unknown as Parameters<typeof smartRead>[0]);
     }
     default:
       throw new Error(`unknown tool: ${name}`);
@@ -137,6 +153,73 @@ const TOOL_SCHEMAS = [
         max_tokens: { type: "number", description: "Cap on returned tokens (default 2000)" },
       },
       required: ["log_id"],
+    },
+  },
+  {
+    name: "smart_read",
+    description:
+      "Read a source file intelligently. For files >300 lines, PREFER this over the standard Read tool — returns a symbol outline first, focused bodies on demand. Typical savings: 70–90% tokens vs. whole-file reads. Supports Kotlin, Java, TypeScript, JavaScript, Python, Go, Rust. Use `focus` to zoom into a specific symbol by name or regex. Use mode='full' only when you truly need every line.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Source file path" },
+        focus: {
+          type: "string",
+          description: "Symbol name, qualified name (Class.method), or regex to zoom into",
+        },
+        mode: {
+          type: "string",
+          enum: ["outline", "full", "auto"],
+          description: "'outline' = symbols without bodies; 'full' = whole file; 'auto' (default) = outline for large files, full for small",
+        },
+        max_tokens: {
+          type: "number",
+          description: "Cap on returned tokens (default 2000)",
+        },
+      },
+      required: ["path"],
+    },
+  },
+  {
+    name: "list_symbols",
+    description:
+      "List the symbol tree (classes/functions/interfaces/properties) of a source file WITHOUT bodies. Use before reading a large source file so you only fetch the bits you need. Supports Kotlin, Java, TypeScript, JavaScript, Python, Go, Rust.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Absolute or relative source file path" },
+        kinds: {
+          type: "array",
+          items: { type: "string" },
+          description: "Filter to specific symbol kinds (e.g. ['class','interface'])",
+        },
+        depth: {
+          type: "number",
+          description: "0=top-level only, -1=all nested (default -1)",
+        },
+      },
+      required: ["path"],
+    },
+  },
+  {
+    name: "read_symbol",
+    description:
+      "Return the source code body of one or more named symbols. Supports dotted qualified names like 'AuthViewModel.login' for nested symbols. Use after list_symbols to fetch only the specific functions/classes you need.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Source file path" },
+        names: {
+          type: "array",
+          items: { type: "string" },
+          description: "Symbol names, optionally dotted (e.g. 'Foo.bar'). Unqualified names match any symbol with that name.",
+        },
+        include_surrounding: {
+          type: "boolean",
+          description: "If true, include enclosing class/namespace context note (default false)",
+        },
+      },
+      required: ["path", "names"],
     },
   },
 ];
