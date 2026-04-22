@@ -1,11 +1,12 @@
 import type { OutputKind } from "../classifier.js";
 import type { Compressor } from "../types.js";
 import { genericCompressor } from "./generic.js";
+import { gradleCompressor } from "./gradle.js";
 
-// MVP: gradle/npm/jest/pytest/junit compressors land in M3–M4. For now everything
-// routes to generic; classifier result is preserved so the plumbing is ready.
+// MVP: npm/jest/pytest/junit land in M4. Unhandled kinds fall back to generic.
 const registry: Partial<Record<OutputKind, Compressor>> = {
   generic: genericCompressor,
+  gradle: gradleCompressor,
 };
 
 export function pickCompressor(kind: OutputKind): Compressor {
