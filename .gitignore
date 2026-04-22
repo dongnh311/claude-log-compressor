@@ -1,0 +1,15 @@
+node_modules/
+dist/
+build/
+*.log
+.DS_Store
+.env
+.env.local
+coverage/
+.nyc_output/
+.cache/
+.vscode/
+.idea/
+*.tsbuildinfo
+/tmp/
+claude-logs/
