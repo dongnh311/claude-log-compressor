@@ -1,6 +1,6 @@
 {
   "name": "claude-log-compressor",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "MCP server that intercepts build/test/install commands, runs them, and returns a compressed summary to Claude — dramatically reducing context consumption during iterative build/test loops.",
   "keywords": [
     "mcp",
@@ -16,6 +16,14 @@
   ],
   "license": "MIT",
   "author": "dongnh <hoaidongit5@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dongnh311/claude-log-compressor.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dongnh311/claude-log-compressor/issues"
+  },
+  "homepage": "https://github.com/dongnh311/claude-log-compressor#readme",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
@@ -37,7 +45,8 @@
     "lint": "biome check src test",
     "format": "biome format --write src test",
     "clean": "rm -rf dist",
-    "bench": "tsx scripts/benchmark.ts"
+    "bench": "tsx scripts/benchmark.ts",
+    "prepublishOnly": "npm run clean && npm run typecheck && npm run build && npm test"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0"
