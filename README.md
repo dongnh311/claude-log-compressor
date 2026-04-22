@@ -6,6 +6,34 @@
 
 > MCP server that intercepts build/test/install commands, runs them, and returns a compressed summary to Claude instead of the raw multi-thousand-token output. Cuts context consumption during iterative build/test loops by 60–95%.
 
+## Quick start
+
+**1.** Add to your Claude Code MCP config at `~/.claude/mcp.json` (or your project's `.claude/mcp.json`):
+
+```json
+{
+  "mcpServers": {
+    "log-compressor": {
+      "command": "npx",
+      "args": ["-y", "claude-log-compressor@latest"]
+    }
+  }
+}
+```
+
+**2.** Restart Claude Code. The tools `smart_run`, `smart_build`, `smart_test`, `read_log_section` will appear.
+
+**3.** (Recommended) In your project's `CLAUDE.md`, nudge the model to use them instead of raw bash for builds/tests/installs:
+
+```markdown
+## Build/test commands
+Always use `smart_build` and `smart_test` (from the log-compressor MCP server)
+instead of invoking gradle/npm/jest/pytest directly via bash. They return the
+same information in 5–10× fewer tokens while preserving all errors.
+```
+
+That's it. Next time Claude runs `./gradlew assembleDebug` on your project, it'll call `smart_build` and see a ~100-token summary instead of a 2,000-token log dump.
+
 ## Why
 
 When Claude Code runs commands like `gradle build`, `npm install`, `pytest`, or reads large logs, the raw output often consumes 5,000–20,000 tokens per invocation. Over a session, that exhausts the Pro-tier 5-hour limit and the context window far faster than necessary — and 90% of it is noise:
