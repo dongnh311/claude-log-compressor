@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { pickCompressor } from "../src/log-side/compressors/index.js";
 import { classify } from "../src/log-side/classifier.js";
 
-const FIX_DIR = join(process.cwd(), "test", "fixtures");
+const FIX_DIR = join(process.cwd(), "test", "fixtures", "logs");
 
 interface Row {
   fixture: string;

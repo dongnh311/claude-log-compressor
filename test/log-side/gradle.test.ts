@@ -1,9 +1,9 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { gradleCompressor } from "../src/log-side/compressors/gradle.js";
+import { gradleCompressor } from "../../src/log-side/compressors/gradle.js";
 
-const FIX = join(__dirname, "fixtures");
+const FIX = join(__dirname, "..", "fixtures", "logs");
 const loadFixture = (name: string) => readFileSync(join(FIX, name), "utf8");
 
 describe("gradleCompressor.canHandle", () => {

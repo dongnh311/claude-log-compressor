@@ -1,9 +1,9 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { pytestCompressor } from "../src/log-side/compressors/pytest.js";
+import { pytestCompressor } from "../../src/log-side/compressors/pytest.js";
 
-const FIX = join(__dirname, "fixtures");
+const FIX = join(__dirname, "..", "fixtures", "logs");
 const load = (name: string) => readFileSync(join(FIX, name), "utf8");
 
 describe("pytestCompressor on passing fixture", () => {
